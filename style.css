@@ -1,0 +1,93 @@
+<style>
+*{
+    margin: 0;
+    padding: 0;
+}
+.carousel-item{
+    height: 40rem;
+    background-color:777 ;
+    color: white;
+    position: relative;
+    background-position: center;
+    background-size: cover;
+}
+.content-form{
+    background: url('background.jpg');
+    background-size: cover;
+
+}
+.overlay-image{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-position: center;
+    background-size: cover;
+    opacity: 0.7;
+
+}
+.carousel-caption{
+    position: absolute;
+    top:45%;
+}
+.index-col{
+    /* background-color: rgb(226, 223, 223); */
+}
+.index-text{
+    text-align: center;
+    padding-top: 5rem;
+
+}
+.index-text a{
+    text-decoration: none;
+}
+/* @media only screen and (max-width:765px){
+    .index-text{
+        margin-left: 0;
+
+    }
+} */
+.content-form{
+    background:url("images/background.jpg") no-repeat fixed center;
+    background-size: cover;
+    min-height: 100vh;
+}
+.navbar{
+}
+.error{
+    color: red;
+}
+.date_input{
+    width: 150px;
+    margin-left: 25px;
+    height: 40px;
+    padding-left: 5px;
+}
+.date-input-label{
+    margin-left: -23px;
+}
+div.profile_image{
+    width: 150px;
+    height: 150px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.table-followers img{
+    width:40px;
+    height:40px;
+    border-radius: 50%;
+}
+.header-icon img{
+    width:40px;
+    height:40px;
+    border-radius: 50%;
+}
+.header-icon{
+    margin-left: 10px;
+    
+}
+.header{
+    color: black;
+}
+</style>
