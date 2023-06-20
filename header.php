@@ -35,29 +35,23 @@ function createHeader($array,$conn){
                 $row = profileExists($id, $conn);
                 if ($row !== false){
                     echo "<li class='header-icon d-none d-md-block'>";
-                    echo "<a href='profile.php' class='nav-link'>";
+                    echo "<a href='show_profile.php?id=$id' class='nav-link'>";
                     $img = $row['profile_image'];
                     echo "<img src='images/$img'>";
+                    echo "</a>";
+                    echo '</li>';
+                }else{
+                    echo "<li class='header-icon d-none d-md-block'>";
+                    echo "<a href='show_profile.php?id=$id' class='nav-link'>";
+                    echo "<img src='images/o_avatar.webp'>";
                     echo "</a>";
                     echo '</li>';
                 }
             }
                 
-                // echo '<li class="nav-item">';
-                // echo '<a href="register.php" class="nav-link fs-5">Register
-                //         </a>';
-                // echo '</li>';
-                // echo '<li class="nav-item">';
-                // echo '<a href="register.php" class="nav-link fs-5">Login
-                //         </a>';
-                // echo '</li>';
-                
-                // echo '</ul>';
         echo '</div>';
     echo '</div>';
     echo '</nav>';
 }
-function indexTile(){
-    
-}
+
 ?>

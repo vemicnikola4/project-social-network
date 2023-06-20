@@ -8,6 +8,48 @@
     }
     $id = $_SESSION['id'];
     
+    if ( isset( $_GET['friend_id'])){
+        $friendId = $conn -> real_escape_string($_GET['friend_id']);
+        $q = "SELECT * FROM `followers` 
+        WHERE `id_sender` = $id AND `id_receiver` = $friendId 
+        ";
+    
+        $res = $conn->query($q);
+        if ( $res -> num_rows == 0 ){
+            $upit = "INSERT INTO `followers` (`id_sender`,`id_receiver`)
+            VALUE 
+            ($id, $friendId)
+            ";
+            $res1 = $conn->query($upit);
+        }
+    }
+
+    if ( isset( $_GET['unfriend_id'])){
+        //zahtev za odpracenje korisnika
+        $friendId = $conn -> real_escape_string($_GET['unfriend_id']);
+    
+        $q = "DELETE FROM `followers` 
+        WHERE `id_sender` = $id AND `id_receiver` = $friendId
+        ";
+        $conn ->query($q);
+    }
+
+    //odrediti koje druge korisnike prati logovan korisnik
+    $niz1 = [];
+    $upit1 = "SELECT `id_receiver` FROM `followers` WHERE `id_sender` = $id";
+    $res1 = $conn -> query($upit1);
+    while( $row = $res1 -> fetch_array(MYSQLI_NUM)){
+        $niz1[]=$row[0];
+    }
+    // var_dump($niz1);
+    //odrediti koje drugi korisnici prate logovanog korisnika
+    $niz2 = [];
+    $upit2 = "SELECT `id_sender` FROM `followers` WHERE `id_receiver` = $id";
+    $res2 = $conn -> query($upit2);
+    while( $row = $res2 -> fetch_array(MYSQLI_NUM)){
+        $niz2[]=$row[0];
+    }
+    // var_dump($niz2);
 
 ?>
 <!DOCTYPE html>
@@ -47,15 +89,42 @@
 <?php
     }else{
         ?>
-                <div class="card">
+                <div class="card  mb-5">
                     <div class="card-header">
                             <h4>See other members from our site</h4>
                     </div>
                     <div class="card-body">
 
+                        
+<?php
+                        $profiles = $res->fetch_all(MYSQLI_ASSOC);
+                        $haveProfiles = [];
+                        $haveFLeter = [];
+                        $dontHaveProfiles = [];
+                        $dontHaveFLeter = [];
+                        foreach ($profiles as $profile ){
+                            if ( $profile['full_name'] !== NULL ){
+                                if ( !in_array( substr($profile['full_name'],0,1),$haveFLeter)){
+                                    $haveFLeter[] = substr($profile['full_name'],0,1);
+                                }
+                                $haveProfiles[]=$profile;    
+                            }else{
+                                if ( !in_array(substr($profile['username'],0,1), $dontHaveFLeter )){
+                                    $dontHaveFLeter[] = substr($profile['username'],0,1);
+                                }
+                                $dontHaveProfiles[]=$profile;    
+
+                            }
+                         }
+                            // foreach($dontHaveFLeter as $letter )
+                            // echo "<p>$letter</p>";
+                        }
+                        foreach ( $haveFLeter as $letter ){
+                            ?>
                         <table class="table table-bordered table-striped table-followers">
                             <thead>
                                 <tr class="d-none d-md-table-row">
+                                    <th><?php echo strtoupper($letter);  ?></th>
                                     <th>Name</th>
                                     <th>Profile Image</th>
                                     <th>Action</th>
@@ -63,36 +132,84 @@
                                 </tr>
                             </thead>
                             <tbody>
-<?php
-                        while( $row = $res -> fetch_assoc()){
-                        echo "<tr class='table-success '>";
-                            echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2'>";
-                            if ( $row['full_name'] !== NULL ){
-                            echo $row['full_name'];
-                            }else{
-                            echo $row['username'];
+                                    <?php
+                            foreach ( $haveProfiles as $profile ){
+                                if ( substr($profile['full_name'],0,1) == $letter ){
+                                    
+                                echo "<tr>";
+                                    echo "<td></td>";
+                                    echo "<td><a href='show_profile.php?id=".$profile['id']."'>".$profile['full_name']."</a></td>";
+                                    echo "</td>";
+                                    $friendId = $profile['id'];
+                                    if ( $profile['profile_image'] !== NULL ){
+                                    echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2'>
+                                    <img src='images/".$profile['profile_image']."' alt='profile img' ></td>";
+                                    }else{
+                                    echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2'><img src='images/o_avatar.webp' alt='profile img'></td>";
+                                    }
+                                    if ( !in_array($friendId,$niz1)){
+                                    if (!in_array($friendId,$niz2)){
+                                        $text = 'Follow';
+                                    }else{
+                                        $text = 'Follow back';
+                                    }
+                                    echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2 pb-3'><a href='followers.php?friend_id=$friendId' class='btn btn-info me-2'>$text</a></td>";
+                                    }else{
+                                    echo "<td><a href='followers.php?unfriend_id=$friendId' class='btn btn-danger'>Unfollow</a></td>";
+                                    }
+                                echo "</tr>";
+                                }
                             }
-                            echo "</td>";
-                            $friendId = $row['id'];
-                            if ( $row['profile_image'] !== NULL ){
-                            echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2'>
-                                <img src='images/".$row['profile_image']."' alt='profile img' ></td>";
-                            }else{
-                            echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2'><img src='images/o_avatar.webp' alt='profile img'></td>";
-                            }
-                            if ( following($id, $friendId, $conn)){
-                                $buttonV = 'following';
-                            }else{
-                                $buttonV = 'follow';
-                            }
-                            echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2 pb-3'><a href='follow.php?friend_id=$friendId' class='btn btn-info me-2'>".$buttonV."</a>
-                            <a href='unfollow.php?friend_id=$friendId' class='btn btn-danger'>unfollow</a></td>";
-                        echo "</tr>";
-
                         }
-    }
+                        ?>
+                            </tbody>
+                        </table>
+                        <?php
+                        foreach ( $dontHaveFLeter as $letter ){
+                            ?>
+                        <table class="table table-bordered table-striped table-followers">
+                            <thead>
+                                <tr class="d-none d-md-table-row">
+                                    <th><?php echo strtoupper($letter);  ?></th>
+                                    <th>Name</th>
+                                    <th>Profile Image</th>
+                                    <th>Action</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <?php
+                            foreach ( $dontHaveProfiles as $profile ){
+                                if ( substr($profile['username'],0,1) == $letter ){
+                                    
+                                echo "<tr>";
+                                    echo "<td></td>";
+                                    echo "<td><a href='show_profile.php?id=".$profile['id']."'>".$profile['username']."</a></td>";
+                                    echo "</td>";
+                                    $friendId = $profile['id'];
+                                    if ( $profile['profile_image'] !== NULL ){
+                                    echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2'>
+                                    <img src='images/".$profile['profile_image']."' alt='profile img' ></td>";
+                                    }else{
+                                    echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2'><img src='images/o_avatar.webp' alt='profile img'></td>";
+                                    }
+                                    if ( !in_array($friendId,$niz1)){
+                                    if (!in_array($friendId,$niz2)){
+                                        $text = 'Follow';
+                                    }else{
+                                        $text = 'Follow back';
+                                    }
+                                    echo "<td class='d-block d-md-table-cell d-flex justify-content-center pt-2 pb-3'><a href='followers.php?friend_id=$friendId' class='btn btn-info me-2'>$text</a></td>";
+                                    }else{
+                                    echo "<td><a href='followers.php?unfriend_id=$friendId' class='btn btn-danger'>Unfollow</a></td>";
+                                    }
+                                echo "</tr>";
+                                }
+                            }
+                        }
+                            
 ?>
-                        </tbody>
+                            </tbody>
                         </table>
                         <p>Back to <a href="index.php">Home page</a></p>
 

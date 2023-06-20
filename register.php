@@ -82,7 +82,7 @@ if ( $_SERVER['REQUEST_METHOD'] == "POST"){
     <div class="container mt-5">
             <div class="row justify-content-center ">
                 <div class="col-md-6 ">
-                    <div class="card border border-success">
+                    <div class="card">
                         <div class="card-header bg-light py-2 pb-1">
                             <h4>Register to our site</h4>
                         </div>

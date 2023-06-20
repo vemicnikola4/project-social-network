@@ -42,19 +42,13 @@
 .index-text a{
     text-decoration: none;
 }
-/* @media only screen and (max-width:765px){
-    .index-text{
-        margin-left: 0;
 
-    }
-} */
 .content-form{
     background:url("images/background.jpg") no-repeat fixed center;
     background-size: cover;
     min-height: 100vh;
 }
-.navbar{
-}
+
 .error{
     color: red;
 }
@@ -89,5 +83,30 @@ div.profile_image{
 }
 .header{
     color: black;
+}
+.err_msg{
+    color:red;
+    font-size: larger;
+    font-weight: bolder;
+}
+.m{
+    color: blue;
+}
+.f{
+    color: pink;
+}
+.o{
+    color: gray;
+}
+.table-profile td{
+    border: black 2px solid;
+    padding: 5px;
+}
+.table-profile{
+    margin-left: 150px;
+}
+.link-profile{
+    margin-left: 150px;
+
 }
 </style>

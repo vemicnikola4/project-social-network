@@ -9,23 +9,25 @@ if ( !isset( $_SESSION['id'])){
 }
 $id = $_SESSION['id'];
 $firstName = $lastName= $dob = $gender ="";
-$firstNameError = $lastNameError= $dobError = $genderError =$profileIMage = "";
+$firstNameError = $lastNameError= $dobError = $genderError =$profileIMage = $bio = "";
 $sucMessage = "";
 $errMessage = "";
 $profilEditing = false;
+$formTitle = "Please fill the profile detailes to create profile";
 $profileRow = profileExists( $id, $conn );
 if ( $profileRow !== false ){
     $firstName = $profileRow['first_name'];
     $lastName = $profileRow['last_name'];
     $gender = $profileRow['gender'];
     $dob = $profileRow['dob'];
+    $bio = $profileRow['bio'];
     $profilEditing = true;
 }
 if ( $profileRow === false ){
     $submitValue ="Create profile";
 }else{
     $submitValue ="Edit profile";
-
+    $formTitle = "Update your profile detailes";
 }
 if ( isset($_GET['m']) && $_GET['m'] == 'reset'){
     $firstName = $lastName= $dob = $gender ="";
@@ -38,6 +40,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST"){
     $gender=$conn->real_escape_string($_POST['gender']);
     $dob=$conn->real_escape_string($_POST['dob']);
     $profileImage=$conn->real_escape_string($_POST['profile_image']);
+    $bio=$conn->real_escape_string($_POST['bio']);
     
     //validacija polja
     //ako je sve u redu kreiramo nov profil
@@ -54,9 +57,9 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST"){
         $exists;
         if ( $profileRow === false ){
             $q = "INSERT INTO  `profiles`
-            (`first_name`,`last_name`,`gender`,`dob`,`id_user`,`profile_image`)
+            (`first_name`,`last_name`,`gender`,`dob`,`id_user`,`profile_image`,`bio`)
             VALUES
-            ('".$firstName."','".$lastName."','".$gender."','".$dob."',$id,'".$profileImage."')";
+            ('".$firstName."','".$lastName."','".$gender."','".$dob."',$id,'".$profileImage."','".$bio."')";
             
         }else{
             $q = "UPDATE `profiles` SET 
@@ -64,7 +67,8 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST"){
             `last_name` = '".$lastName."',
             `gender` = '".$gender."',
             `dob` = '".$dob."',
-            `profile_image`= '".$profileImage."'
+            `profile_image`= '".$profileImage."',
+            `bio`= '".$bio."'
             WHERE `id_user` = $id
             ";
         }
@@ -103,9 +107,9 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST"){
 <div class="container mt-5">
     <div class="row justify-content-center ">
             <div class="col-md-6 ">
-                <div class="card border border-success">
+                <div class="card ">
                     <div class="card-header bg-light py-2 pb-1 ">
-                        <h4>Please fill the profile detailes</h4>
+                        <h4><?php echo $formTitle ?></h4>
                     </div>
                     <div class="text-success fw-bold mt-1 ms-3">
                         <?php echo $sucMessage;  ?>
@@ -125,6 +129,7 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST"){
                                 <input type="last_name" name="last_name" class="form-control border-0 border-bottom shadow-sm" value="<?php echo $lastName; ?>" id="last_name" aria-describedby="emailHelp">
                                 <span class="text-danger">* <?php echo $lastNameError; ?></span>
                             </div>
+
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="gender" id="m" value='m' <?php if ( $gender == 'm'){echo 'checked';}?>>Male    
                             </div>
@@ -141,16 +146,22 @@ if ( $_SERVER["REQUEST_METHOD"] == "POST"){
                             
                             <div class="mt-3">
                                 <label for="profile_image" class="form-label">Choose profile image</label>
-                                <input class="form-control" type="file" name='profile_image' id="profile_image" value="<?php echo $profileImage?>">
+                                <input class="form-control" type="file" name='profile_image' id="profile_image" >
                             </div>
-
+                            <div class="form-group mt-3">
+                                <label for="exampleFormControlTextarea1">Tell us more about you</label>
+                                <textarea class="form-control" id="bio" name="bio" rows="3"><?php echo $bio ?></textarea>
+                            </div>
                             <div class="mt-4">
                                 <button type="submit" class="btn btn-primary"><?php echo $submitValue; ?></button>
                             </div>
                             <div class="mt-3">
-                                <a href="profile.php?m=reset" class="btn btn-danger">Reset</a>
+                                <a href="profile.php?m=reset" class="btn btn-danger">Reset form</a>
                                 <!-- <button type="reset" class="btn btn-danger">Reset</button> -->
                             </div>
+                            <p class="mt-3">
+                               <a href="reset_password.php">Reset password</a>
+                            </p>
                         </form>
                         <p class="mt-3">
                             Go back to <a href="index.php">Home page</a>

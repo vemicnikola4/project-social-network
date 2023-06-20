@@ -43,13 +43,14 @@ if ( isset($_SESSION['username'])){
     <title>Social Network</title>
 </head>
 <body>
+<div class="container-fluid bg-light">
+
 <?php
     createHeader($arrayHeader,$conn);
 
 ?>
-<div class="container-fluid">
-    <div class="row bg bg-light">
-        <div class="col-lg-8 ">
+    <div class="row bg ">
+        <div class="col-lg-7 ">
             <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-indicators">
                     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -86,7 +87,7 @@ if ( isset($_SESSION['username'])){
             </button>
             </div>
         </div>
-        <div class="col-lg-4 aling-text-center index-col">
+        <div class="col-lg-5 aling-text-center index-col">
             <div class="index-text  align-items-center pb-3">
             <h1 class="text-dark ">Welcome <?php echo ucfirst($username)  ?> to our Social Network!</h1>
             <?php 
@@ -111,7 +112,7 @@ if ( isset($_SESSION['username'])){
                     echo "<p class='fs-3 text-danger'> $poruka </p>";
                     echo "<p class='fs-3 mt-5 fw-bold'>See other members <a href='followers.php'>here</a></p>";
                     echo "<p class='fs-3 mt-5 fw-bold'>Edit profile <a href='profile.php'>here</a></p>";
-                    echo '<button type="button" class="btn p-3 pt-2 mt-5  btn-danger  fs-2 fw-3"><a href="logout.php" class="text-white">Log out</a></button>';
+                    echo '<p class="mt-5 "><a href="logout.php" class="text-danger fs-2 fw-3">Logout</a></p>';
                 }
                 
             }
